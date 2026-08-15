@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MetaShield</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <h1>🛡️ MetaShield</h1>
+  <p>Share Files, Not Your Identity.</p>
+
+  <button id="themeToggleBtn">🌙 Dark Mode</button>
+
+  <input type="file" id="fileInput" accept="image/*" hidden />
+
+  <div id="dropZone">
+    <label for="fileInput" id="selectImageBtn">Choose Image</label>
+    <p>or drag & drop an image here</p>
+  </div>
+
+  <div id="previewArea" hidden>
+    <img id="previewImg" alt="Selected image preview" />
+    <p id="fileName"></p>
+
+    <div id="riskScoreArea">
+      <p id="riskScoreText"></p>
+    </div>
+
+    <div id="findingsList"></div>
+
+    <button id="removeMetadataBtn">Remove Metadata</button>
+    <button id="resetBtn">Select Another Image</button>
+  </div>
+
+  <p class="footer">🔒 Your files are processed locally.</p>
+
+  <script src="../lib/exifr.js"></script>
+  <script src="../js/metadata.js"></script>
+  <script src="../js/riskEngine.js"></script>
+  <script src="../js/cleaner.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
