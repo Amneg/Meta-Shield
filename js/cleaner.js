@@ -1,6 +1,5 @@
 // Removes metadata by redrawing the image onto a canvas and re-exporting it.
-// Canvas re-encoding naturally drops all EXIF/metadata as a side effect,
-// since the canvas only ever stores raw pixel data.
+// Returns the clean Blob so the caller can also verify/display its metadata.
 async function removeMetadataAndDownload(file) {
   try {
     const imageBitmap = await createImageBitmap(file);
@@ -14,24 +13,26 @@ async function removeMetadataAndDownload(file) {
 
     const outputType = file.type === "image/png" ? "image/png" : "image/jpeg";
 
-    canvas.toBlob(
-      (blob) => {
-        if (!blob) {
-          alert("Sorry, this file couldn't be cleaned.");
-          return;
-        }
-        downloadBlob(blob, "clean_" + file.name);
-      },
-      outputType,
-      0.95 // JPEG quality (ignored for PNG)
-    );
+    const blob = await new Promise((resolve) => {
+      canvas.toBlob(resolve, outputType, 0.95);
+    });
+
+    if (!blob) {
+      alert("Sorry, this file couldn't be cleaned.");
+      return null;
+    }
+
+    const cleanFilename = "clean_" + file.name;
+    downloadBlob(blob, cleanFilename);
+
+    return { blob, filename: cleanFilename };
   } catch (error) {
     console.error("Failed to remove metadata:", error);
     alert("Sorry, this file couldn't be cleaned. It may be corrupted or in an unsupported format.");
+    return null;
   }
 }
 
-// Triggers a browser download of a Blob as a file.
 function downloadBlob(blob, filename) {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");

@@ -1,121 +1,161 @@
 :root {
-  --bg-color: #ffffff;
+  --bg-color: #fafafa;
+  --surface-color: #ffffff;
   --text-color: #1a1a1a;
-  --muted-text: #555555;
-  --border-color: #cccccc;
-  --card-bg: #f7f7f7;
+  --muted-text: #6b7280;
+  --border-color: #e5e7eb;
+  --accent: #2b6cb0;
+  --accent-hover: #1f5590;
+  --radius: 10px;
 }
 
 body[data-theme="dark"] {
-  --bg-color: #1a1a1a;
+  --bg-color: #121212;
+  --surface-color: #1e1e1e;
   --text-color: #f0f0f0;
-  --muted-text: #aaaaaa;
-  --border-color: #444444;
-  --card-bg: #2a2a2a;
+  --muted-text: #9ca3af;
+  --border-color: #333333;
+  --accent: #4a90d9;
+  --accent-hover: #6ba3e0;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
-  width: 340px;
-  padding: 16px;
-  font-family: Arial, sans-serif;
-  text-align: center;
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 20px;
+  font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   background-color: var(--bg-color);
   color: var(--text-color);
   transition: background-color 0.2s, color 0.2s;
 }
 
-h1 {
-  font-size: 18px;
-  margin-bottom: 4px;
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 18px;
 }
 
-p {
+.header-text h1 {
+  font-size: 19px;
+  margin: 0 0 2px 0;
+}
+
+.header-text p {
   font-size: 12px;
   color: var(--muted-text);
-  margin-bottom: 16px;
+  margin: 0;
 }
 
 #themeToggleBtn {
-  background: none;
+  background: var(--surface-color);
   border: 1px solid var(--border-color);
   color: var(--text-color);
-  border-radius: 6px;
-  padding: 4px 10px;
+  border-radius: 20px;
+  padding: 6px 12px;
   font-size: 11px;
-  margin-bottom: 8px;
   cursor: pointer;
+  white-space: nowrap;
 }
 
-button {
-  padding: 8px 16px;
-  font-size: 14px;
-  cursor: pointer;
+#themeToggleBtn:hover {
+  border-color: var(--accent);
 }
 
-label#selectImageBtn {
-  display: inline-block;
-  padding: 8px 16px;
-  font-size: 14px;
-  cursor: pointer;
-  background: #2b6cb0;
-  color: white;
-  border-radius: 6px;
-}
-
+/* Drop zone */
 #dropZone {
   border: 2px dashed var(--border-color);
-  border-radius: 8px;
-  padding: 16px;
-  margin-top: 8px;
+  border-radius: var(--radius);
+  padding: 28px 16px;
+  text-align: center;
+  background: var(--surface-color);
+  transition: border-color 0.15s, background-color 0.15s;
 }
 
 #dropZone.dragover {
-  border-color: #2b6cb0;
-  background-color: #eef4fb;
+  border-color: var(--accent);
+  background-color: rgba(43, 108, 176, 0.06);
 }
 
 #dropZone p {
   font-size: 11px;
   color: var(--muted-text);
-  margin-top: 8px;
+  margin: 10px 0 0 0;
+}
+
+label#selectImageBtn {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--accent);
+  color: white;
+  border-radius: 8px;
+  transition: background-color 0.15s;
+}
+
+label#selectImageBtn:hover {
+  background: var(--accent-hover);
+}
+
+/* Cards — shared style for each results section */
+.card {
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-top: 12px;
+  text-align: left;
 }
 
 #previewImg {
   max-width: 100%;
-  max-height: 180px;
-  border-radius: 6px;
-  margin-top: 8px;
+  max-height: 220px;
+  border-radius: 8px;
+  display: block;
+  margin: 0 auto;
 }
 
 #fileName {
   font-size: 12px;
-  color: var(--text-color);
-  margin-top: 4px;
+  color: var(--muted-text);
+  text-align: center;
+  margin: 8px 0 0 0;
   word-break: break-all;
 }
 
-#riskScoreArea {
-  margin-top: 12px;
-  font-weight: bold;
-  font-size: 14px;
+/* Risk score */
+#riskScoreArea p {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-color);
 }
 
-#findingsList {
-  margin-top: 8px;
-  text-align: left;
-}
-
+/* Findings */
 .finding {
-  padding: 6px 0;
+  padding: 8px 0;
   border-bottom: 1px solid var(--border-color);
   font-size: 12px;
+}
+
+.finding:last-child {
+  border-bottom: none;
 }
 
 .finding .risk-tag {
   display: inline-block;
   margin-left: 6px;
   font-size: 10px;
-  padding: 2px 6px;
+  font-weight: 600;
+  padding: 2px 8px;
   border-radius: 10px;
 }
 
@@ -123,28 +163,123 @@ label#selectImageBtn {
 .risk-medium { background: #ffe9cc; color: #b35c00; }
 .risk-low { background: #fff6cc; color: #8a6d00; }
 
-#removeMetadataBtn {
+body[data-theme="dark"] .risk-high { background: #4a1f1f; color: #ff8a8a; }
+body[data-theme="dark"] .risk-medium { background: #4a3319; color: #ffc266; }
+body[data-theme="dark"] .risk-low { background: #4a4319; color: #ffe066; }
+
+.finding small {
+  color: var(--muted-text);
+  display: block;
+  margin-top: 2px;
+}
+
+/* Location callout */
+#locationArea {
+  border-color: #b00020;
+  background: #fdeaea;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+body[data-theme="dark"] #locationArea {
+  background: #3a1f1f;
+  border-color: #e57373;
+}
+
+#locationArea a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+#locationArea a:hover {
+  text-decoration: underline;
+}
+
+/* Raw data toggle + list */
+#toggleRawDataBtn {
+  width: 100%;
   margin-top: 12px;
-  background: #2b6cb0;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  border-radius: 8px;
+  font-size: 12px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+#toggleRawDataBtn:hover {
+  border-color: var(--accent);
+}
+
+#rawDataArea {
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.rawField {
+  font-size: 11px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--border-color);
+  word-break: break-word;
+}
+
+.rawField:last-child {
+  border-bottom: none;
+}
+
+.rawField strong {
+  color: var(--text-color);
+}
+
+/* Clean result */
+#cleanResultArea p {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+}
+
+/* Action buttons */
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+#removeMetadataBtn {
+  flex: 1;
+  padding: 12px;
+  background: var(--accent);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 #removeMetadataBtn:hover {
-  background: #1f5590;
+  background: var(--accent-hover);
 }
 
 #resetBtn {
-  margin-top: 8px;
-  background: none;
+  padding: 12px 16px;
+  background: var(--surface-color);
   border: 1px solid var(--border-color);
   color: var(--text-color);
-  border-radius: 6px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
 }
 
+#resetBtn:hover {
+  border-color: var(--accent);
+}
+
+/* Footer */
 .footer {
   font-size: 10px;
   color: var(--muted-text);
-  margin-top: 12px;
+  text-align: center;
+  margin-top: 20px;
 }

@@ -6,10 +6,13 @@
   <link rel="stylesheet" href="popup.css" />
 </head>
 <body>
-  <h1>🛡️ MetaShield</h1>
-  <p>Share Files, Not Your Identity.</p>
-
-  <button id="themeToggleBtn">🌙 Dark Mode</button>
+  <div class="header">
+    <div class="header-text">
+      <h1>🛡️ MetaShield</h1>
+      <p>Share Files, Not Your Identity.</p>
+    </div>
+    <button id="themeToggleBtn">🌙 Dark Mode</button>
+  </div>
 
   <input type="file" id="fileInput" accept="image/*" hidden />
 
@@ -19,17 +22,31 @@
   </div>
 
   <div id="previewArea" hidden>
-    <img id="previewImg" alt="Selected image preview" />
-    <p id="fileName"></p>
+    <div class="card">
+      <img id="previewImg" alt="Selected image preview" />
+      <p id="fileName"></p>
+    </div>
 
-    <div id="riskScoreArea">
+    <div id="riskScoreArea" class="card">
       <p id="riskScoreText"></p>
     </div>
 
-    <div id="findingsList"></div>
+    <div id="findingsList" class="card"></div>
 
-    <button id="removeMetadataBtn">Remove Metadata</button>
-    <button id="resetBtn">Select Another Image</button>
+    <div id="locationArea" class="card" hidden></div>
+
+    <button id="toggleRawDataBtn">Show All Extracted Data</button>
+    <div id="rawDataArea" class="card" hidden></div>
+
+    <div id="cleanResultArea" class="card" hidden>
+      <p><strong>✅ Cleaned file metadata</strong></p>
+      <div id="cleanDataArea"></div>
+    </div>
+
+    <div class="actions">
+      <button id="removeMetadataBtn">Remove Metadata</button>
+      <button id="resetBtn">New Image</button>
+    </div>
   </div>
 
   <p class="footer">🔒 Your files are processed locally.</p>

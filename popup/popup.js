@@ -1,6 +1,5 @@
 console.log("MetaShield popup loaded");
 
-const selectImageBtn = document.getElementById("selectImageBtn");
 const fileInput = document.getElementById("fileInput");
 const dropZone = document.getElementById("dropZone");
 const previewArea = document.getElementById("previewArea");
@@ -8,9 +7,14 @@ const previewImg = document.getElementById("previewImg");
 const fileNameEl = document.getElementById("fileName");
 const riskScoreText = document.getElementById("riskScoreText");
 const findingsList = document.getElementById("findingsList");
+const locationArea = document.getElementById("locationArea");
 const removeMetadataBtn = document.getElementById("removeMetadataBtn");
 const themeToggleBtn = document.getElementById("themeToggleBtn");
 const resetBtn = document.getElementById("resetBtn");
+const toggleRawDataBtn = document.getElementById("toggleRawDataBtn");
+const rawDataArea = document.getElementById("rawDataArea");
+const cleanResultArea = document.getElementById("cleanResultArea");
+const cleanDataArea = document.getElementById("cleanDataArea");
 
 let currentFile = null;
 
@@ -39,10 +43,37 @@ dropZone.addEventListener("drop", (event) => {
 });
 
 // Remove Metadata button
-removeMetadataBtn.addEventListener("click", () => {
-  if (currentFile) {
-    removeMetadataAndDownload(currentFile);
+removeMetadataBtn.addEventListener("click", async () => {
+  if (!currentFile) return;
+
+  const result = await removeMetadataAndDownload(currentFile);
+  if (!result) return;
+
+  const cleanFile = new File([result.blob], result.filename, { type: result.blob.type });
+  const cleanMetadata = await extractMetadata(cleanFile);
+
+  cleanDataArea.innerHTML = "";
+  const keys = Object.keys(cleanMetadata);
+  if (keys.length === 0) {
+    cleanDataArea.innerHTML = "<p>No metadata found — file is clean. 🎉</p>";
+  } else {
+    keys.sort().forEach((key) => {
+      const value = formatMetadataValue(key, cleanMetadata[key]);
+      const div = document.createElement("div");
+      div.className = "rawField";
+      div.innerHTML = `<strong>${key}:</strong> ${value}`;
+      cleanDataArea.appendChild(div);
+    });
   }
+
+  cleanResultArea.hidden = false;
+});
+
+// Show/hide full extracted metadata
+toggleRawDataBtn.addEventListener("click", () => {
+  const isHidden = rawDataArea.hidden;
+  rawDataArea.hidden = !isHidden;
+  toggleRawDataBtn.textContent = isHidden ? "Hide All Extracted Data" : "Show All Extracted Data";
 });
 
 // Select Another Image (reset)
@@ -54,6 +85,13 @@ resetBtn.addEventListener("click", () => {
   fileNameEl.textContent = "";
   riskScoreText.textContent = "";
   findingsList.innerHTML = "";
+  locationArea.hidden = true;
+  locationArea.innerHTML = "";
+  rawDataArea.innerHTML = "";
+  rawDataArea.hidden = true;
+  toggleRawDataBtn.textContent = "Show All Extracted Data";
+  cleanResultArea.hidden = true;
+  cleanDataArea.innerHTML = "";
 });
 
 // Light/dark mode toggle
@@ -86,6 +124,8 @@ async function handleImageFile(file) {
 
   const metadata = await extractMetadata(file);
   console.log("Extracted metadata:", metadata);
+  renderRawMetadata(metadata);
+  renderLocation(metadata);
 
   const { score, findings } = calculateRiskScore(metadata);
   const level = getRiskLevel(score);
@@ -108,4 +148,85 @@ async function handleImageFile(file) {
       findingsList.appendChild(div);
     });
   }
+}
+
+// Displays exact GPS coordinates found in the metadata, with a map link.
+function renderLocation(metadata) {
+  const lat = metadata.latitude;
+  const lon = metadata.longitude;
+
+  if (lat === undefined || lon === undefined) {
+    locationArea.hidden = true;
+    locationArea.innerHTML = "";
+    return;
+  }
+
+  const roundedLat = roundNumber(lat);
+  const roundedLon = roundNumber(lon);
+  const mapsUrl = `https://www.google.com/maps?q=${lat},${lon}`;
+
+  locationArea.innerHTML = `
+    📍 <strong>Exact location found:</strong><br/>
+    Latitude: ${roundedLat}, Longitude: ${roundedLon}<br/>
+    <a href="${mapsUrl}" target="_blank" rel="noopener noreferrer">View on Google Maps →</a>
+  `;
+  locationArea.hidden = false;
+}
+
+// Renders every extracted metadata field, not just the risky ones.
+function renderRawMetadata(metadata) {
+  rawDataArea.innerHTML = "";
+
+  const keys = Object.keys(metadata);
+  if (keys.length === 0) {
+    rawDataArea.innerHTML = "<p>No metadata fields found.</p>";
+    return;
+  }
+
+  keys.sort().forEach((key) => {
+    const value = formatMetadataValue(key, metadata[key]);
+    const div = document.createElement("div");
+    div.className = "rawField";
+    div.innerHTML = `<strong>${key}:</strong> ${value}`;
+    rawDataArea.appendChild(div);
+  });
+}
+
+// Converts raw EXIF values into clean, human-readable text.
+function formatMetadataValue(key, value) {
+  if (value === null || value === undefined) return "N/A";
+
+  if (value instanceof Date) {
+    return value.toLocaleString(undefined, {
+      dateStyle: "medium",
+      timeStyle: "short",
+    });
+  }
+
+  if (ArrayBuffer.isView(value)) {
+    return "N/A";
+  }
+
+  if (Array.isArray(value) && key.includes("GPS") && key.match(/Latitude|Longitude/)) {
+    const [deg, min, sec] = value;
+    return `${deg}° ${min}' ${sec.toFixed(1)}"`;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((v) => (typeof v === "number" ? roundNumber(v) : v)).join(", ");
+  }
+
+  if (typeof value === "number") {
+    return roundNumber(value);
+  }
+
+  if (typeof value === "object") {
+    return "N/A";
+  }
+
+  return String(value);
+}
+
+function roundNumber(num) {
+  return Math.round(num * 100) / 100;
 }

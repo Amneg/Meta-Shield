@@ -4,7 +4,9 @@
   "version": "0.1.0",
   "description": "Privacy-focused Chrome extension that detects hidden image metadata and helps remove sensitive information before sharing.",
   "action": {
-    "default_popup": "popup/popup.html",
     "default_title": "MetaShield"
+  },
+  "background": {
+    "service_worker": "background.js"
   }
 }

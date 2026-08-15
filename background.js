@@ -1,9 +1,3 @@
-// Opens MetaShield's UI in a small standalone window (not a toolbar
-// dropdown popup, and not a browser tab). This avoids two problems:
-// - Toolbar popups can close when the native file picker steals focus.
-// - We don't want a full browser tab per your preference.
-// Reuses the existing window if one is already open.
-
 let metashieldWindowId = null;
 
 chrome.action.onClicked.addListener(() => {
@@ -27,8 +21,8 @@ function createMetashieldWindow(url) {
     {
       url: url,
       type: "popup",
-      width: 340,
-      height: 560,
+      width: 420,
+      height: 700,
     },
     (win) => {
       metashieldWindowId = win.id;
