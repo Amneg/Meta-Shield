@@ -23,10 +23,13 @@ Photos often carry hidden metadata — GPS coordinates, camera model, timestamps
 - 🔍 EXIF metadata extraction (via `exifr`)
 - 🚦 Privacy Risk Score (0–100, with 🟢🟡🟠🔴 risk levels)
 - 🗣️ Plain-language explanation for each risky field
+- 📍 **Exact location display** — shows GPS coordinates and a direct Google Maps link when found
+- 📋 **Full metadata viewer** — expandable list of every extracted field, not just the risky ones, with cleaned-up formatting (readable dates, rounded numbers, formatted coordinates)
 - 🧹 One-click metadata removal (canvas re-encoding)
+- ✅ **Post-clean verification** — shows the cleaned file's metadata so you can confirm it's actually gone
 - 💾 Download the cleaned image — original is never overwritten
 - 🌗 Dark / light mode
-- 🔁 "Select Another Image" reset
+- 🔁 "New Image" reset
 
 **Current scope:** JPEG and PNG images only. PDFs, Office docs, video, and batch processing are future work — see [Roadmap](#roadmap).
 
@@ -36,8 +39,8 @@ Photos often carry hidden metadata — GPS coordinates, camera model, timestamps
 
 ```
 Select image → Extract EXIF metadata → Calculate risk score
-→ Display metadata + explanations → Remove metadata (canvas re-encode)
-→ Download clean image
+→ Display metadata, location, and explanations → Remove metadata (canvas re-encode)
+→ Verify cleaned file → Download clean image
 ```
 
 The image is redrawn onto an HTML `<canvas>` and re-exported — this naturally strips all metadata as a side effect, without needing to parse EXIF's binary format directly.
@@ -63,7 +66,7 @@ Points: GPS +40 · Timestamp +15 · Serial Number +15 · Camera Model +10 · Man
 
 HTML5, CSS3, JavaScript (ES6), Chrome Extension Manifest V3, [`exifr`](https://github.com/MikeKovarik/exifr).
 
-No frameworks, no backend — everything runs client-side in the extension popup.
+No frameworks, no backend — everything runs client-side. The UI opens as a standalone extension window (via `chrome.windows.create`) rather than the standard toolbar dropdown, since the dropdown can close prematurely when the native file picker opens.
 
 ---
 
@@ -72,6 +75,7 @@ No frameworks, no backend — everything runs client-side in the extension popup
 ```
 MetaShield/
 ├── manifest.json
+├── background.js        → opens the standalone UI window
 ├── popup/
 │   ├── popup.html
 │   ├── popup.css
@@ -108,16 +112,17 @@ cd Meta-Shield
 
 1. Click the MetaShield icon in your toolbar
 2. Select an image (file picker or drag & drop)
-3. Review the metadata found and your Privacy Risk Score
-4. Click **Remove Metadata**
-5. Download the cleaned image
-6. Click **Select Another Image** to scan another
+3. Review the metadata found, your Privacy Risk Score, and exact location (if present)
+4. Optionally click **Show All Extracted Data** to see every field
+5. Click **Remove Metadata**
+6. Confirm the cleaned file's metadata and download it
+7. Click **New Image** to scan another
 
 ---
 
 ## Known Limitations
 
-- The popup may close if the native file picker opens without DevTools attached, on some systems — a known Chrome/Chromium behavior, not a MetaShield bug.
+- Popup closing on the native file picker (without DevTools) is a known Chrome/Chromium limitation. MetaShield works around this by opening as a standalone window instead of a toolbar dropdown.
 - Metadata removal re-encodes the image, which slightly re-compresses JPEGs (quality set high, but not byte-for-byte lossless).
 - Supports JPEG and PNG only.
 
@@ -129,10 +134,12 @@ cd Meta-Shield
 
 **Phase 4:**
 - [x] Dark/light mode
-- [x] UI polish (reset button)
-- [ ] Privacy report
+- [x] UI polish (reset button, redesigned cards/layout)
+- [x] Full metadata viewer
+- [x] Exact location display
+- [ ] Privacy report export
 
-**Future:** PDF/DOCX support, batch processing, GPS map view, upload interception, more file formats.
+**Future:** PDF/DOCX support, batch processing, remembering theme preference, extension icons, more file formats.
 
 ---
 
