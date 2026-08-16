@@ -8,6 +8,10 @@ A privacy-focused Chrome extension that scans images for hidden EXIF metadata, e
 
 > 🔒 All processing happens 100% locally. No image, metadata, or file is ever uploaded to a server.
 
+<p align="center">
+  <img src="assets/ui-mockup.png" alt="MetaShield interface" width="380" />
+</p>
+
 ---
 
 ## About
@@ -23,10 +27,10 @@ Photos often carry hidden metadata — GPS coordinates, camera model, timestamps
 - 🔍 EXIF metadata extraction (via `exifr`)
 - 🚦 Privacy Risk Score (0–100, with 🟢🟡🟠🔴 risk levels)
 - 🗣️ Plain-language explanation for each risky field
-- 📍 **Exact location display** — shows GPS coordinates and a direct Google Maps link when found
-- 📋 **Full metadata viewer** — expandable list of every extracted field, not just the risky ones, with cleaned-up formatting (readable dates, rounded numbers, formatted coordinates)
+- 📍 Exact location display — GPS coordinates and a direct Google Maps link when found
+- 📋 Full metadata viewer — expandable list of every extracted field, with cleaned-up formatting (readable dates, rounded numbers, formatted coordinates)
 - 🧹 One-click metadata removal (canvas re-encoding)
-- ✅ **Post-clean verification** — shows the cleaned file's metadata so you can confirm it's actually gone
+- ✅ Post-clean verification — shows the cleaned file's metadata so you can confirm it's actually gone
 - 💾 Download the cleaned image — original is never overwritten
 - 🌗 Dark / light mode
 - 🔁 "New Image" reset
@@ -37,11 +41,9 @@ Photos often carry hidden metadata — GPS coordinates, camera model, timestamps
 
 ## How It Works
 
-```
-Select image → Extract EXIF metadata → Calculate risk score
-→ Display metadata, location, and explanations → Remove metadata (canvas re-encode)
-→ Verify cleaned file → Download clean image
-```
+<p align="center">
+  <img src="assets/flow-diagram.png" alt="MetaShield process flow" width="700" />
+</p>
 
 The image is redrawn onto an HTML `<canvas>` and re-exported — this naturally strips all metadata as a side effect, without needing to parse EXIF's binary format directly.
 
@@ -66,7 +68,7 @@ Points: GPS +40 · Timestamp +15 · Serial Number +15 · Camera Model +10 · Man
 
 HTML5, CSS3, JavaScript (ES6), Chrome Extension Manifest V3, [`exifr`](https://github.com/MikeKovarik/exifr).
 
-No frameworks, no backend — everything runs client-side. The UI opens as a standalone extension window (via `chrome.windows.create`) rather than the standard toolbar dropdown, since the dropdown can close prematurely when the native file picker opens.
+No frameworks, no backend — everything runs client-side. The UI opens as a standalone extension window (via `chrome.windows.create`) rather than the standard toolbar dropdown, since the dropdown can close prematurely when the native file picker opens without DevTools attached.
 
 ---
 
@@ -86,7 +88,10 @@ MetaShield/
 │   └── cleaner.js
 ├── lib/
 │   └── exifr.js
-├── assets/icons/
+├── assets/
+│   ├── icons/
+│   ├── ui-mockup.png
+│   └── flow-diagram.png
 ├── README.md
 ├── LICENSE
 └── .gitignore
@@ -122,7 +127,7 @@ cd Meta-Shield
 
 ## Known Limitations
 
-- Popup closing on the native file picker (without DevTools) is a known Chrome/Chromium limitation. MetaShield works around this by opening as a standalone window instead of a toolbar dropdown.
+- The toolbar popup can close if the native file picker opens without DevTools attached, on some systems. MetaShield works around this by opening as a standalone window instead.
 - Metadata removal re-encodes the image, which slightly re-compresses JPEGs (quality set high, but not byte-for-byte lossless).
 - Supports JPEG and PNG only.
 
@@ -139,7 +144,7 @@ cd Meta-Shield
 - [x] Exact location display
 - [ ] Privacy report export
 
-**Future:** PDF/DOCX support, batch processing, remembering theme preference, extension icons, more file formats.
+**Future:** PDF/DOCX support, batch processing, remembering theme preference, extension icons, more file formats, video metadata scanning.
 
 ---
 
